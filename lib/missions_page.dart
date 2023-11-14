@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_header.dart'; // Replace with the actual file path
 
 class MissionsTabContent extends StatelessWidget {
   @override
@@ -7,6 +8,11 @@ class MissionsTabContent extends StatelessWidget {
     // Which is the ListView of tasks you had in your original MyHomePage
     return ListView(
       children: <Widget>[
+        ProfileHeader(
+          userName: 'Sebastian',
+          avatarUrl: '/home/robertopupo/demi-frontend/assets/images/boomer.jpg',
+          title: 'Flutter Developer',
+        ),
         TaskCard(
           icon: Icons.watch_later,
           title: 'Draw for 50min',

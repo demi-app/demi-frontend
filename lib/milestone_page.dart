@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'utils/mission_card.dart'; // Assuming mission_card.dart contains the MissionCard widget
+import 'utils/milestone_card.dart'; // Assuming milestone_card.dart contains the MilestoneCard widget
 
-class Mission {
+class Milestone {
   final String title;
   final String time; // This should be a DateTime or a formatted string
   final String iconName; // If you use icon names as strings
   final String colorCode; // If you use color codes as strings
 
-  Mission({
+  Milestone({
     required this.title,
     required this.time,
     this.iconName = '', // Provide default values or ensure they are passed
     this.colorCode = '',
   });
 
-  factory Mission.fromJson(Map<String, dynamic> json) {
-    return Mission(
+  factory Milestone.fromJson(Map<String, dynamic> json) {
+    return Milestone(
       title: json['title'],
       time: json['time'], // Make sure to convert this to your required format
       // ... initialize other properties
@@ -25,35 +25,35 @@ class Mission {
   }
 }
 
-class MissionsPage extends StatefulWidget {
+class MilestonesPage extends StatefulWidget {
   @override
-  _MissionsPageState createState() => _MissionsPageState();
+  _MilestonesPageState createState() => _MilestonesPageState();
 }
 
-class _MissionsPageState extends State<MissionsPage> {
-  List<Mission> _missions = [];
+class _MilestonesPageState extends State<MilestonesPage> {
+  List<Milestone> _milestones = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchMissions();
+    _fetchMilestones();
   }
 
-  Future<void> _fetchMissions() async {
+  Future<void> _fetchMilestones() async {
     try {
-      // Update with your actual endpoint to fetch missions
-      final response = await http.get(Uri.parse('http://localhost:8080/api/mission'));
+      // Update with your actual endpoint to fetch milestones
+      final response = await http.get(Uri.parse('http://localhost:8080/api/milestone'));
       
       if (response.statusCode == 200) {
-        List<dynamic> missionsJson = json.decode(response.body);
+        List<dynamic> milestonesJson = json.decode(response.body);
         setState(() {
-          _missions = missionsJson.map((json) => Mission.fromJson(json)).toList();
+          _milestones = milestonesJson.map((json) => Milestone.fromJson(json)).toList();
           _isLoading = false;
         });
       } else {
         // Handle the case where the server returns a non-200 status code
-        throw Exception('Failed to load missions');
+        throw Exception('Failed to load milestones');
       }
     } catch (e) {
       // Handle any errors here
@@ -68,17 +68,17 @@ class _MissionsPageState extends State<MissionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Missions'),
+        title: Text('Milestones'),
       ),
       body: ListView.builder(
-        itemCount: _missions.length,
+        itemCount: _milestones.length,
         itemBuilder: (context, index) {
-          final mission = _missions[index];
-          return MissionCard(
-            iconName: mission.iconName, // Correct property name
-            title: mission.title,
-            time: mission.time,
-            colorCode: mission.colorCode, // Correct property name
+          final milestone = _milestones[index];
+          return MilestoneCard(
+            iconName: milestone.iconName, // Correct property name
+            title: milestone.title,
+            time: milestone.time,
+            colorCode: milestone.colorCode, // Correct property name
             // ... other properties and callbacks
           );
         },

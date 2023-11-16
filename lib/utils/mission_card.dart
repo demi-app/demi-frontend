@@ -1,78 +1,67 @@
 import 'package:flutter/material.dart';
 
 class Mission {
+  final String id;
   final String iconName;
-  final String title;
-  final String time;
-  final String colorCode;
+  final String description;
+  final String xp_value;
+  final String milestone_id;
 
   Mission({
+    required this.id,
     required this.iconName,
-    required this.title,
-    required this.time,
-    required this.colorCode,
+    required this.description,
+    required this.xp_value,
+    required this.milestone_id,
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) {
     return Mission(
+      id: json['id'],
       iconName: json['icon'],
-      title: json['title'],
-      time: json['time'],
-      colorCode: json['color'],
+      description: json['description'],
+      xp_value: json['xp_value'],
+      milestone_id: json['milestone_id'],
     );
-  }
-
-  IconData get iconData {
-    // Convert the iconName string to IconData
-    return iconMap[this.iconName] ?? Icons.error;
-  }
-
-  Color get colorData {
-    // Convert the colorCode string to Color
-    return colorMap[this.colorCode] ?? Colors.grey;
   }
 }
 
-// Example of a map that converts string to IconData
-final Map<String, IconData> iconMap = {
-  'watch_later': Icons.watch_later,
-  // Add other mappings here
-};
-
-// Example of a map that converts string to Color
-final Map<String, Color> colorMap = {
-  'blue': Colors.blue,
-  'red': Colors.red,
-  // Add other color mappings here
-};
-
 class MissionCard extends StatelessWidget {
-  final String iconName;
-  final String title;
-  final String time;
-  final String colorCode;
+  final Mission mission;
+  final VoidCallback onSelect; // Callback for mission selection
 
   const MissionCard({
     Key? key,
-    required this.iconName,
-    required this.title,
-    required this.time,
-    required this.colorCode,
+    required this.mission,
+    required this.onSelect,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    IconData icon = iconMap[iconName] ?? Icons.error;
-    Color color = colorMap[colorCode] ?? Colors.grey;
-
-    // Now return a proper widget
+    // The icon and color are now directly retrieved from the Mission object
     return Card(
       child: ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(title),
-        subtitle: Text(time),
-        // Add other ListTile properties as needed
+        leading: Icon(Icons.circle),
+        title: Text(mission.description),
+        subtitle: Text(mission.xp_value),
+        trailing: IconButton(
+          icon: Icon(Icons.check_circle_outline),
+          onPressed: onSelect,
+        ),
       ),
     );
   }
 }
+
+// Example of a map that converts string to IconData
+//final Map<String, IconData> iconMap = {
+//  'watch_later': Icons.watch_later,
+  // Add other mappings here
+//};
+
+// Example of a map that converts string to Color
+//final Map<String, Color> colorMap = {
+//  'blue': Colors.blue,
+//  'red': Colors.red,
+  // Add other color mappings here
+//};

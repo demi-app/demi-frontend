@@ -1,47 +1,37 @@
 import 'package:flutter/material.dart';
 
-class Milestone {
+class Goal {
   final String id;
-  final String iconName;
   final String description;
-  final String progress;
-  final String goal_id;
 
-  Milestone({
+  Goal({
     required this.id,
-    required this.iconName,
     required this.description,
-    required this.progress,
-    required this.goal_id,
   });
 
-  factory Milestone.fromJson(Map<String, dynamic> json) {
-    return Milestone(
+  factory Goal.fromJson(Map<String, dynamic> json) {
+    return Goal(
       id: json['id'],
-      iconName: json['icon'],
       description: json['description'],
-      progress: json['progress'],
-      goal_id: json['milestone_id'],
     );
   }
 }
 
-class MilestoneCard extends StatelessWidget {
-  final Milestone milestone;
+class GoalCard extends StatelessWidget {
+  final Goal goal;
 
-  const MilestoneCard({
+  const GoalCard({
     Key? key,
-    required this.milestone,
+    required this.goal,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // The icon and color are now directly retrieved from the Milestone object
+    // The icon and color are now directly retrieved from the Goal object
     return Card(
       child: ListTile(
         leading: Icon(Icons.circle),
-        title: Text(milestone.description),
-        subtitle: Text(milestone.progress),
+        title: Text(goal.description),
       ),
     );
   }

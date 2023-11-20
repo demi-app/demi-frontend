@@ -6,6 +6,7 @@ class Mission {
   final String description;
   final String xp_value;
   final String milestone_id;
+  bool isSelected;
 
   Mission({
     required this.id,
@@ -13,27 +14,30 @@ class Mission {
     required this.description,
     required this.xp_value,
     required this.milestone_id,
+    this.isSelected = false,
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) {
     return Mission(
-      id: json['id'],
-      iconName: json['icon'],
-      description: json['description'],
-      xp_value: json['xp_value'],
-      milestone_id: json['milestone_id'],
-    );
+        id: json['id'],
+        iconName: json['icon'],
+        description: json['description'],
+        xp_value: json['xp_value'],
+        milestone_id: json['milestone_id'],
+        isSelected: json['is_selected']);
   }
 }
 
 class MissionCard extends StatelessWidget {
   final Mission mission;
   final VoidCallback onSelect; // Callback for mission selection
+  final bool isSelected;
 
   const MissionCard({
     Key? key,
     required this.mission,
     required this.onSelect,
+    this.isSelected = false,
   }) : super(key: key);
 
   @override

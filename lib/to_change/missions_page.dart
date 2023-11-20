@@ -37,14 +37,27 @@ class _MissionsPageState extends State<MissionsPage> {
     });
   }
 
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
+      var userId = Provider.of<UserNotifier>(context).currentUser?.id;
+      if (userId != null) {
+        _fetchMissions(userId);
+      }
+      _isInit = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _loadSampleMissions(); // _fetchMissions();
   }
 
-  Future<void> _fetchMissions() async {
-    var userId = Provider.of<UserNotifier>(context).currentUser?.id;
+  Future<void> _fetchMissions(userId) async {
     try {
       final response = await http
           .get(Uri.parse('http://localhost:8080/api/mission?userId=$userId'));
@@ -69,18 +82,17 @@ class _MissionsPageState extends State<MissionsPage> {
     }
   }
 
-  Future<void> _sendMissionSelectionToBackend(Mission mission) async {
+  Future<void> _sendMissionSelectionToBackend(Mission mission, userId) async {
     try {
       // Replace with your actual backend URL and data format
       final response = await http.post(
-        Uri.parse('https://yourbackend.com/api/mission/select'),
+        Uri.parse('http://localhost:8080/api/mission?userId=$userId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
           'missionId':
               mission.id, // Assuming each mission has a unique identifier
-          'selected': 'true',
         }),
       );
 
@@ -118,6 +130,12 @@ class _MissionsPageState extends State<MissionsPage> {
     // Send the selection information to the backend
     // For example, using an HTTP POST request
     print('Lets goooooo');
-    _sendMissionSelectionToBackend(mission);
+    _toggleMissionSelection(mission);
+  }
+
+  void _toggleMissionSelection(Mission mission) {
+    setState(() {
+      mission.isSelected = !mission.isSelected;
+    });
   }
 }

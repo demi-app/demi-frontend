@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../components/app_text_form_field.dart';
 import '../utils/extensions.dart';
@@ -6,6 +7,7 @@ import '../values/app_colors.dart';
 import '../values/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../utils/user_data.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,31 +17,18 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  AuthAPI _authAPI = AuthAPI();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  String _message = '';
 
   // FocusNode confirmFocusNode = FocusNode();
 
   bool isObscure = true;
   bool isConfirmPasswordObscure = true;
-
-  Future<void> sendUserData() async {
-    var url = Uri.parse(
-        'http://localhost:8080/api/user'); // Replace with your backend URL
-    var response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': nameController.text, // Use .text to get the string value
-        'email': emailController.text,
-        'password': passwordController.text
-      }),
-    );
-  }
 
   Future<bool> checkEmail() async {
     var url = Uri.parse(
@@ -55,24 +44,16 @@ class _RegisterPageState extends State<RegisterPage> {
         var data = json.decode(response.body);
         bool emailExists = data[
             'emailExists']; // Assuming 'emailExists' is the field returned by your backend
-        setState(() {
-          _message = emailExists
-              ? 'Email is already registered.'
-              : 'Email is available.';
-        });
+        setState(() {});
         return !emailExists; // Return true if email is not registered, false otherwise
       } else {
         // Handle error
-        setState(() {
-          _message = 'Error checking email.';
-        });
+        setState(() {});
         return false;
       }
     } catch (e) {
       // Handle any exceptions
-      setState(() {
-        _message = 'An error occurred while checking the email.';
-      });
+      setState(() {});
       return false;
     }
   }
@@ -84,15 +65,18 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Checking email availability...')),
       );
-
-      // Check if the email is available
-      bool emailAvailable = await checkEmail();
-      if (emailAvailable) {
-        // If email is available, proceed to send user data
-        sendUserData();
-        nameController.clear();
-        emailController.clear();
-        passwordController.clear();
+      var req = await _authAPI.signUp(
+        firstNameController as String,
+        lastNameController as String,
+        emailController as String,
+        passwordController as String,
+        confirmPasswordController as String,
+      );
+      if (req.statusCode == 200) {
+        print(req.body);
+        var user = User.fromReqBody(req.body);
+        BlocProvider.of<UserCubit>(context).login(user);
+        user.printAttributes();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Registration Complete!'),
@@ -122,9 +106,9 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.lightBlue,
-                    AppColors.blue,
-                    AppColors.darkBlue,
+                    AppColors.beige,
+                    AppColors.brown,
+                    AppColors.darkBrown,
                   ],
                 ),
               ),
@@ -185,7 +169,22 @@ class _RegisterPageState extends State<RegisterPage> {
                               ? 'Invalid Name'
                               : null;
                     },
-                    controller: nameController,
+                    controller: firstNameController,
+                  ),
+                  AppTextFormField(
+                    labelText: 'Last Name',
+                    autofocus: true,
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (value) => _formKey.currentState?.validate(),
+                    validator: (value) {
+                      return value!.isEmpty
+                          ? 'Please, Enter Last Name '
+                          : value.length < 4
+                              ? 'Invalid Name'
+                              : null;
+                    },
+                    controller: lastNameController,
                   ),
                   AppTextFormField(
                     labelText: 'Email',

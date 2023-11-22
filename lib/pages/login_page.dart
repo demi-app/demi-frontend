@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/pages/home_page.dart';
 import '../values/app_routes.dart';
-
 import '../components/app_text_form_field.dart';
-import '../resources/vectors.dart';
+import 'resources/vectors.dart';
 import '../utils/extensions.dart';
 import '../values/app_colors.dart';
 import '../values/app_constants.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:provider/provider.dart';
+import '../utils/user_data.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,56 +18,33 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  AuthAPI _authAPI = AuthAPI();
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   bool isObscure = true;
 
-  class UserDataProvider with ChangeNotifier {
-  UserData _userData;
-
-  UserData get userData => _userData;
-
-  void setUserData(UserData data) {
-    _userData = data;
-    notifyListeners();
+  void PushError(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MyHomePage()));
   }
-}
 
   Future<void> verifyLogin() async {
-    var url = Uri.parse(
-        'YOUR_BACKEND_LOGIN_ENDPOINT'); // Replace with your backend login URL
     try {
-      var response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': emailController.text,
-          'password': passwordController.text,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        // Login successful
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Logged In Successfully!')),
-        );
-        UserData userData = UserData.fromJson(json.decode(response.body));
-        emailController.clear();
-        passwordController.clear();
-        // Navigate to another screen or perform other actions upon successful login
+      var req = await _authAPI.login(
+          emailController as String, passwordController as String);
+      if (req.statusCode == 200) {
+        print(req.body);
+        var user = User.fromReqBody(req.body);
+        BlocProvider.of<UserCubit>(context).login(user);
+        user.printAttributes();
       } else {
-        // Login failed
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid credentials!')),
-        );
+        PushError(context);
       }
-    } catch (e) {
-      // Error handling
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred during login')),
-      );
+    } on Exception catch (e) {
+      print(e.toString());
+      PushError(context);
     }
   }
 
@@ -188,11 +164,11 @@ class _LoginPageState extends State<LoginPage> {
                       height: 15,
                     ),
                     FilledButton(
-                      onPressed: _formKey.currentState?.validate() ?? false
-                          ? () {
-                              verifyLogin();
-                            }
-                          : null,
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          verifyLogin();
+                        }
+                      },
                       style: const ButtonStyle().copyWith(
                         backgroundColor: MaterialStateProperty.all(
                           _formKey.currentState?.validate() ?? false
@@ -286,7 +262,8 @@ class _LoginPageState extends State<LoginPage> {
                           ?.copyWith(color: Colors.black),
                     ),
                     TextButton(
-                      onPressed: () => AppRoutes.registerScreen.pushName(),
+                      onPressed: () =>
+                          {}, //AppRoutes.registerScreen.pushName(),
                       style: Theme.of(context).textButtonTheme.style,
                       child: Text(
                         'Register',

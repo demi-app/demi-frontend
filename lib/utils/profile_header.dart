@@ -29,13 +29,13 @@ class ProfileHeader extends StatelessWidget {
             children: [
               Text(
                 userName,
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               if (title != null) ...[
                 const SizedBox(height: 4.0),
                 Text(
                   title!,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
             ],

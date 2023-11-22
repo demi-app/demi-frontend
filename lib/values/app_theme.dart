@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'app_colors.dart';
+import 'app_colors.dart'; // Make sure this import points to the correct file location
 
 class AppTheme {
   static final textFormFieldBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(
-      color: AppColors.grey,
+    borderSide: BorderSide(
+      color: AppColors.brown, // Updated to use brown from the new color scheme
       width: 1.6,
     ),
   );
@@ -14,16 +13,18 @@ class AppTheme {
   static final ThemeData themeData = ThemeData(
     useMaterial3: true,
     colorSchemeSeed: AppColors.primaryColor,
-    scaffoldBackgroundColor: Colors.white,
-    textTheme: const TextTheme(
+    scaffoldBackgroundColor:
+        AppColors.beige, // Updated to use beige as background color
+    textTheme: TextTheme(
       titleLarge: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Colors.white,
+        color: AppColors
+            .darkBrown, // Updated to use dark brown for better contrast
         fontSize: 34,
         letterSpacing: 0.5,
       ),
       bodySmall: TextStyle(
-        color: Colors.grey,
+        color: AppColors.lightBrown, // Updated to use light brown for body text
         fontSize: 14,
         letterSpacing: 0.5,
       ),
@@ -31,10 +32,11 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.transparent,
-      errorStyle: const TextStyle(
+      errorStyle: TextStyle(
         fontSize: 12,
+        color: AppColors.darkBrown, // Error text color updated to dark brown
       ),
-      contentPadding: const EdgeInsets.symmetric(
+      contentPadding: EdgeInsets.symmetric(
         horizontal: 24,
         vertical: 14,
       ),
@@ -43,16 +45,16 @@ class AppTheme {
       focusedBorder: textFormFieldBorder,
       focusedErrorBorder: textFormFieldBorder,
       enabledBorder: textFormFieldBorder,
-      labelStyle: const TextStyle(
+      labelStyle: TextStyle(
         fontSize: 17,
-        color: Colors.grey,
+        color: AppColors.darkBrown, // Label text color updated to dark brown
         fontWeight: FontWeight.w500,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primaryColor,
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 4,
         ),
@@ -64,9 +66,9 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primaryColor,
-        minimumSize: const Size(double.infinity, 50),
+        minimumSize: Size(double.infinity, 50),
         side: BorderSide(
-          color: Colors.grey.shade200,
+          color: AppColors.lightBrown, // Updated to use light brown for border
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -76,7 +78,7 @@ class AppTheme {
     filledButtonTheme: FilledButtonThemeData(
       style: ButtonStyle(
         minimumSize: MaterialStateProperty.all<Size>(
-          const Size(double.infinity, 52),
+          Size(double.infinity, 52),
         ),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -84,10 +86,11 @@ class AppTheme {
           ),
         ),
         foregroundColor: MaterialStateProperty.all<Color>(
-          Colors.black,
+          AppColors
+              .darkBrown, // Text color inside the button updated to dark brown
         ),
         textStyle: MaterialStateProperty.all<TextStyle>(
-          const TextStyle(
+          TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
           ),

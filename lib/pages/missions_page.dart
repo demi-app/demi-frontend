@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'utils/mission_card.dart'; // Assuming mission_card.dart contains the MissionCard widget
-import 'utils/user_profile.dart';
+import '../utils/mission_card.dart'; // Assuming mission_card.dart contains the MissionCard widget
+import '../utils/user_profile.dart';
 import 'package:provider/provider.dart';
 
 class MissionsPage extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'utils/milestone_card.dart'; // Assuming milestone_card.dart contains the MilestoneCard widget
-import 'utils/mission_card.dart'; // Assuming milestone_card.dart contains the MilestoneCard widget
-import 'utils/user_profile.dart';
+import '../utils/milestone_card.dart'; // Assuming milestone_card.dart contains the MilestoneCard widget
+import '../utils/mission_card.dart'; // Assuming milestone_card.dart contains the MilestoneCard widget
+import '../utils/user_profile.dart';
 import 'package:provider/provider.dart';
 
 class MilestonesPage extends StatefulWidget {
@@ -104,9 +104,9 @@ class _MilestonesPageState extends State<MilestonesPage> {
           .get(Uri.parse('http://localhost:8080/api/mission?userId=$userId'));
 
       if (response.statusCode == 200) {
-        List<dynamic> selected_missionsJson = json.decode(response.body);
+        List<dynamic> selectedMissionsjson = json.decode(response.body);
         setState(() {
-          _selectedMissions = selected_missionsJson
+          _selectedMissions = selectedMissionsjson
               .map((json) => Mission.fromJson(json))
               .toList();
           _isLoading = false;

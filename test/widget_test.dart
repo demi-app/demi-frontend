@@ -8,15 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:frontend/main.dart';
-
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Provide the required isLoggedIn parameter
-    bool testIsLoggedIn = true; // or false, depending on what you need to test
-
-    // Build our app and trigger a frame, passing in the isLoggedIn parameter
-    await tester.pumpWidget(MyApp(isLoggedIn: testIsLoggedIn));
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);

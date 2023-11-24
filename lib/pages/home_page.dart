@@ -100,7 +100,39 @@ class _HomePageState extends State<HomePage> {
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ..._selectedMissions
-                    .map((m) => MissionCard(mission: m, onSelect: () {}))
+                    .map((m) => MissionCard(mission: m, onSelect: () async {
+                        var userID = "1";
+                        try {
+                          final response = await http.put(
+                            Uri.parse('http://localhost:8080/mission/status'),
+                            headers: {
+                              'Content-Type': 'application/json; charset=UTF-8',
+                              'userID': userID 
+                            },
+                            body: jsonEncode({
+                              "missionID": m.id,
+                              "userID": "1",
+                              "status": "completed"
+                            }),
+                          );
+                          print("back from response");
+
+                          if (response.statusCode == 200) {
+                            print("mission was completed");
+                          } else {
+                            // Handle the case where the server returns a non-200 status code
+                            print("error");
+                            print(response.statusCode);
+                            print(response.body);
+                          }
+                        } catch (e) {
+                          // Handle any errors here
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          print(e);
+                        }
+                      }))
                     .toList(),
               ],
             )),

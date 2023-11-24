@@ -5,8 +5,6 @@ import '../components/app_text_form_field.dart';
 import '../utils/extensions.dart';
 import '../values/app_colors.dart';
 import '../values/app_constants.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../utils/user_data.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -18,7 +16,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   AuthAPI _authAPI = AuthAPI();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -30,53 +28,27 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isObscure = true;
   bool isConfirmPasswordObscure = true;
 
-  Future<bool> checkEmail() async {
-    var url = Uri.parse(
-        'http://localhost:8080/api/user'); // Replace with your backend URL
-    try {
-      var response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': emailController.text}),
-      );
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        bool emailExists = data[
-            'emailExists']; // Assuming 'emailExists' is the field returned by your backend
-        setState(() {});
-        return !emailExists; // Return true if email is not registered, false otherwise
-      } else {
-        // Handle error
-        setState(() {});
-        return false;
-      }
-    } catch (e) {
-      // Handle any exceptions
-      setState(() {});
-      return false;
-    }
-  }
-
   Future<void> handleRegistration() async {
+    print("bruh moment");
     // First, validate the form
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       // Show a loading indicator or a message that email is being checked
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Checking email availability...')),
       );
+      // Use the text property to get the string value from the controllers
       var req = await _authAPI.signUp(
-        firstNameController as String,
-        lastNameController as String,
-        emailController as String,
-        passwordController as String,
-        confirmPasswordController as String,
+        firstNameController.text,
+        lastNameController.text,
+        emailController.text,
+        passwordController.text,
       );
       if (req.statusCode == 200) {
         print(req.body);
         var user = User.fromReqBody(req.body);
         BlocProvider.of<UserCubit>(context).login(user);
         user.printAttributes();
+        Navigator.pushNamed(context, '/goal_selection');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Registration Complete!'),
@@ -88,6 +60,8 @@ class _RegisterPageState extends State<RegisterPage> {
           const SnackBar(content: Text('Email is already registered.')),
         );
       }
+    } else {
+      // Form is not valid, handle accordingly
     }
   }
 

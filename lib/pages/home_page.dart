@@ -6,10 +6,9 @@ import '../utils/user_data.dart';
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
-  void upDateSharedPreferences(String token, int id) async {
+  void upDateSharedPreferences(String id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', token);
-    prefs.setInt('id', id);
+    prefs.setString('id', id);
   }
 
   @override
@@ -21,14 +20,14 @@ class MyHomePage extends StatelessWidget {
           checkPrefsForUser() async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             var sharedToken = prefs.getString('token');
-            var sharedId = prefs.getInt('id');
+            var sharedId = prefs.getString('id');
             if (sharedToken != null && sharedId != null) {
               try {
                 var req = await authAPI.getUser(sharedId, sharedToken);
                 if (req.statusCode == 202) {
                   var user = User.fromReqBody(req.body);
                   BlocProvider.of<UserCubit>(context).login(user);
-                  upDateSharedPreferences(user.token, user.id);
+                  upDateSharedPreferences(user.id);
                 }
               } on Exception {
                 print("fuck");

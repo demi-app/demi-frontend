@@ -16,11 +16,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User defaultUser = User(
-      id: 0, // Default values
+      id: '0', // Default values
       email: '',
-      phone: '',
-      name: '',
-      token: '',
+      firstName: '',
+      lastName: '',
     );
 
     return MultiBlocProvider(
@@ -31,18 +30,15 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Bruh Moment',
         theme: AppTheme.themeData,
+        initialRoute: '/', // Assuming you want to show the LoginPage first.
         routes: {
-          AppRoutes.loginScreen: (context) => const LoginPage(),
-          AppRoutes.registerScreen: (context) => const RegisterPage(),
+          '/': (context) => const LoginPage(), // Default route
+          '/register': (context) => const RegisterPage(),
           '/home': (context) => MyHomePage(),
           '/goal_selection': (context) => GoalsSelectionScreen(),
+          // Add other routes here
         },
       ),
     );
   }
 }
-
-/*
-initialRoute: AppRoutes.loginScreen,
-navigatorKey: AppConstants.navigationKey,
-*/

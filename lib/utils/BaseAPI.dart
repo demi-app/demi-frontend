@@ -1,9 +1,9 @@
 class BaseAPI {
-  static String base = "http://localhost:8080";
-  static var api = base + "/api/v1";
-  var usersPath = api + "/users";
-  var authPath = api + "/auth";
-  var logoutPath = api + "/logout";
+  static String api = "http://localhost:8080";
+  Uri usersPath = Uri.parse(api + '/users');
+  Uri loginPath = Uri.parse(api + '/login');
+  Uri authPath = Uri.parse(api + "/auth");
+  Uri logoutPath = Uri.parse(api + "/logout");
   // more routes
   Map<String, String> headers = {
     "Content-Type": "application/json; charset=UTF-8"

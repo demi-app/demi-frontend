@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:frontend/pages/home_page.dart';
-import '../values/app_routes.dart';
 import '../components/app_text_form_field.dart';
 import 'resources/vectors.dart';
 import '../utils/extensions.dart';
@@ -19,25 +17,26 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   AuthAPI _authAPI = AuthAPI();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   bool isObscure = true;
 
   void PushError(context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MyHomePage()));
+    print("fuck this shit blud");
   }
 
   Future<void> verifyLogin() async {
+    print("bruh moment");
     try {
-      var req = await _authAPI.login(
-          emailController as String, passwordController as String);
+      var req =
+          await _authAPI.login(emailController.text, passwordController.text);
       if (req.statusCode == 200) {
         print(req.body);
         var user = User.fromReqBody(req.body);
         BlocProvider.of<UserCubit>(context).login(user);
+        Navigator.pushNamed(context, '/goal_selection');
         user.printAttributes();
       } else {
         PushError(context);
@@ -263,7 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () =>
-                          {}, //AppRoutes.registerScreen.pushName(),
+                          {Navigator.pushNamed(context, '/register')},
                       style: Theme.of(context).textButtonTheme.style,
                       child: Text(
                         'Register',

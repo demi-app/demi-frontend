@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_introduction/animated_introduction.dart';
-import '../utils/goals.dart';
 import 'home_page.dart';
+import '../utils/goals.dart';
 
 class GoalsSelectionScreen extends StatefulWidget {
   @override

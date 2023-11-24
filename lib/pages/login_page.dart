@@ -35,13 +35,17 @@ class _LoginPageState extends State<LoginPage> {
       if (req.statusCode == 200) {
         print(req.body);
         var user = User.fromReqBody(req.body);
-        BlocProvider.of<UserCubit>(context).login(user);
-        Navigator.pushNamed(context, '/goal_selection');
+        print("got user");
+        print(user);
+        //BlocProvider.of<UserCubit>(context).login(user);
+        print("made it past blocprovider");
+        Navigator.pushNamed(context, '/home');
         user.printAttributes();
       } else {
         PushError(context);
       }
     } on Exception catch (e) {
+      print("unexpected exception");
       print(e.toString());
       PushError(context);
     }

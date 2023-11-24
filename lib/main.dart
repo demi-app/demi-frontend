@@ -64,7 +64,6 @@ class MyApp extends StatelessWidget {
               '/register': (context) => RegisterPage(),
               '/home': (context) => HomePage(),
               '/goal_selection': (context) => GoalsSelectionScreen(),
-              // Add other routes here
             },
           ),
         );

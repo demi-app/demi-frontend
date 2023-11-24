@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import '../utils/milestone_card.dart';
 import '../utils/mission_card.dart';
-import '../utils/user_profile.dart';
-import 'package:provider/provider.dart';
+import '../utils/goal_card.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //List<Milestone> _milestones = [];
+  List<Goal> _goals = [];
   List<Mission> _selectedMissions = [];
   bool _isLoading = true;
 
@@ -20,28 +18,28 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      // _fetchMilestones();
+      _fetchGoals();
       _fetchMissions();
     });
   }
 
-/*
-  Future<void> _fetchMilestones() async {
-    var userId = Provider.of<UserNotifier>(context).currentUser?.id;
+  Future<void> _fetchGoals() async {
+    var userID = "1";
     try {
-      final response = await http
-          .get(Uri.parse('http://localhost:8080/api/milestone?userId=$userId'));
+      final response = await http.get(
+        Uri.parse('http://localhost:8080/goals'),
+        headers: { 'userID': userID });
 
       if (response.statusCode == 200) {
-        List<dynamic> milestonesJson = json.decode(response.body);
+        List<dynamic> goalsJson = json.decode(response.body);
         setState(() {
-          _milestones =
-              milestonesJson.map((json) => Milestone.fromJson(json)).toList();
+          _goals =
+              goalsJson.map((json) => Goal.fromJson(json)).toList();
           _isLoading = false;
         });
       } else {
         // Handle the case where the server returns a non-200 status code
-        throw Exception('Failed to load milestones');
+        throw Exception('Failed to load goals');
       }
     } catch (e) {
       // Handle any errors here
@@ -51,13 +49,14 @@ class _HomePageState extends State<HomePage> {
       print(e);
     }
   }
-  */
 
   Future<void> _fetchMissions() async {
-    var userId = Provider.of<UserNotifier>(context).currentUser?.id;
+    var userID = "1";
     try {
-      final response = await http
-          .get(Uri.parse('http://localhost:8080/api/mission?userId=$userId'));
+      final response = await http.get(
+        Uri.parse('http://localhost:8080/missions/accepted'),
+        headers: { 'userID': userID }
+      );
 
       if (response.statusCode == 200) {
         List<dynamic> selectedMissionsjson = json.decode(response.body);
@@ -69,7 +68,7 @@ class _HomePageState extends State<HomePage> {
         });
       } else {
         // Handle the case where the server returns a non-200 status code
-        throw Exception('Failed to load milestones');
+        print(response.body);
       }
     } catch (e) {
       // Handle any errors here
@@ -91,15 +90,15 @@ class _HomePageState extends State<HomePage> {
           : SingleChildScrollView(
               child: Column(
               children: [
-                Text('Milestones',
+                Text('Goals',
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                // Build Milestones List
-                /*..._milestones.map((m) => MilestoneCard(milestone: m)).toList(),
+                // Build Goals List
+                ..._goals.map((m) => GoalCard(goal: m)).toList(),
                 SizedBox(height: 20),
                 Text('Selected Missions',
                     style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),*/
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ..._selectedMissions
                     .map((m) => MissionCard(mission: m, onSelect: () {}))
                     .toList(),

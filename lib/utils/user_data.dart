@@ -55,22 +55,24 @@ class User {
   String email;
   String firstName;
   String lastName;
+  String token;
 
   User(
       {required this.id,
       required this.email,
       required this.firstName,
-      required this.lastName});
+      required this.lastName,
+      required this.token});
 
   factory User.fromReqBody(String body) {
     Map<String, dynamic> json = jsonDecode(body);
 
     return User(
-      id: json['ID'],
-      email: json['Email'],
-      firstName: json['FirstName'],
-      lastName: json['LastName'],
-    );
+        id: json['ID'],
+        email: json['Email'],
+        firstName: json['FirstName'],
+        lastName: json['LastName'],
+        token: "Buttcheeks");
   }
 
   void printAttributes() {

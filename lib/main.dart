@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'values/app_theme.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
-import 'values/app_routes.dart';
-import 'pages/home_page.dart';
+//import 'values/app_routes.dart';
 import 'pages/goal_selection_page.dart';
 import 'utils/user_data.dart';
 
@@ -13,32 +14,61 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  MyApp({Key? key}) : super(key: key);
+
+  Future<void> updateSharedPreferences(String token, String id) async {
+    final _prefs = await SharedPreferences.getInstance();
+    await _prefs.setString('token', token);
+    await _prefs.setString('id', id);
+  }
+
+  Future<User?> checkPrefsForUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final sharedToken = prefs.getString('token');
+    final sharedId = prefs.getString('id');
+    if (sharedToken != null && sharedId != null) {
+      final authAPI = AuthAPI();
+      try {
+        final req = await authAPI.getUser(sharedId, sharedToken);
+        if (req.statusCode == 202) {
+          final user = User.fromReqBody(req.body);
+          await updateSharedPreferences(user.token, user.id.toString());
+          return user;
+        }
+      } on Exception {
+        print("An error occurred while fetching user data.");
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    User defaultUser = User(
-      id: '0', // Default values
-      email: '',
-      firstName: '',
-      lastName: '',
-    );
-
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<UserCubit>(
-            create: (BuildContext context) => UserCubit(defaultUser)),
-      ],
-      child: MaterialApp(
-        title: 'Bruh Moment',
-        theme: AppTheme.themeData,
-        initialRoute: '/', // Assuming you want to show the LoginPage first.
-        routes: {
-          '/': (context) => const LoginPage(), // Default route
-          '/register': (context) => const RegisterPage(),
-          '/home': (context) => MyHomePage(),
-          '/goal_selection': (context) => GoalsSelectionScreen(),
-          // Add other routes here
-        },
-      ),
+    return FutureBuilder<User?>(
+      future: checkPrefsForUser(),
+      builder: (context, snapshot) {
+        final user = snapshot.data;
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<UserCubit>(
+              create: (context) => UserCubit(user!),
+            ),
+          ],
+          child: MaterialApp(
+            title: 'Your App Title',
+            theme: AppTheme.themeData,
+            // Decide which initial route to show based on user presence
+            initialRoute: user == null ? '/login' : '/home',
+            routes: {
+              '/login': (context) => LoginPage(),
+              '/register': (context) => RegisterPage(),
+              '/home': (context) => HomePage(),
+              '/goal_selection': (context) => GoalsSelectionScreen(),
+              // Add other routes here
+            },
+          ),
+        );
+      },
     );
   }
 }

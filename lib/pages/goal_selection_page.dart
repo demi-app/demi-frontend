@@ -18,7 +18,7 @@ class _GoalsSelectionScreenState extends State<GoalsSelectionScreen> {
         onDone: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MyHomePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
         },
       ),

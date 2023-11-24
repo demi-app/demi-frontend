@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
         var user = User.fromReqBody(req.body);
         print("got user");
         print(user);
-        //BlocProvider.of<UserCubit>(context).login(user);
+        BlocProvider.of<UserCubit>(context).login(user);
         print("made it past blocprovider");
         Navigator.pushNamed(context, '/home');
         user.printAttributes();

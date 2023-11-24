@@ -16,7 +16,8 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
-  Future<void> updateSharedPreferences(String token, String id) async {
+  Future<void> updateSharedPreferences(String id) async {
+    String token = "Buttcheeks"; //delete later
     final _prefs = await SharedPreferences.getInstance();
     await _prefs.setString('token', token);
     await _prefs.setString('id', id);
@@ -24,15 +25,14 @@ class MyApp extends StatelessWidget {
 
   Future<User?> checkPrefsForUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final sharedToken = prefs.getString('token');
     final sharedId = prefs.getString('id');
-    if (sharedToken != null && sharedId != null) {
+    if (sharedId != null) {
       final authAPI = AuthAPI();
       try {
-        final req = await authAPI.getUser(sharedId, sharedToken);
+        final req = await authAPI.getUser(sharedId);
         if (req.statusCode == 202) {
           final user = User.fromReqBody(req.body);
-          await updateSharedPreferences(user.token, user.id.toString());
+          await updateSharedPreferences(user.id);
           return user;
         }
       } on Exception {
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider<UserCubit>(
-              create: (context) => UserCubit(user!),
+              create: (context) => UserCubit(user ?? User.defaultUser()),
             ),
           ],
           child: MaterialApp(

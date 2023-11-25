@@ -2,29 +2,20 @@ import 'package:flutter/material.dart';
 
 class Mission {
   final String id;
-  final String iconName;
   final String description;
-  final String xp_value;
-  final String milestone_id;
-  bool isSelected;
+  final int xpValue;
 
   Mission({
     required this.id,
-    required this.iconName,
     required this.description,
-    required this.xp_value,
-    required this.milestone_id,
-    this.isSelected = false,
+    required this.xpValue,
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) {
     return Mission(
         id: json['id'],
-        iconName: json['icon'],
         description: json['description'],
-        xp_value: json['xp_value'],
-        milestone_id: json['milestone_id'],
-        isSelected: json['is_selected']);
+        xpValue: json['xpValue']);
   }
 }
 
@@ -47,7 +38,7 @@ class MissionCard extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.circle),
         title: Text(mission.description),
-        subtitle: Text(mission.xp_value),
+        subtitle: Text('${mission.xpValue} XP'),
         trailing: IconButton(
           icon: Icon(Icons.check_circle_outline),
           onPressed: onSelect,

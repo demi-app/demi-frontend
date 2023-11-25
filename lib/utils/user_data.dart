@@ -8,11 +8,10 @@ class AuthAPI extends BaseAPI {
       String firstName, String lastName, String email, String password) async {
     var body = jsonEncode({
       'user': {
-        'FirstName': firstName,
-        'LastName': lastName,
-        'Email': email,
-        //'Phone': phone,
-        'Password': password,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'password': password,
       }
     });
 
@@ -22,7 +21,7 @@ class AuthAPI extends BaseAPI {
   }
 
   Future<http.Response> login(String email, String password) async {
-    var body = jsonEncode({'Email': email, 'Password': password});
+    var body = jsonEncode({'email': email, 'password': password});
 
     http.Response response =
         await http.post(super.loginPath, headers: super.headers, body: body);
@@ -31,7 +30,7 @@ class AuthAPI extends BaseAPI {
   }
 
   Future<http.Response> getUser(String id) async {
-    var body = jsonEncode({'ID': id});
+    var body = jsonEncode({'id': id});
 
     http.Response response =
         await http.post(super.usersPath, headers: super.headers, body: body);
@@ -40,7 +39,7 @@ class AuthAPI extends BaseAPI {
   }
 
   Future<http.Response> logout(String id) async {
-    var body = jsonEncode({'ID': id});
+    var body = jsonEncode({'id': id});
 
     http.Response response =
         await http.post(super.logoutPath, headers: super.headers, body: body);
@@ -73,10 +72,10 @@ class User {
     Map<String, dynamic> json = jsonDecode(body);
 
     return User(
-      id: json['ID'],
-      email: json['Email'],
-      firstName: json['FirstName'],
-      lastName: json['LastName'],
+      id: json['id'],
+      email: json['email'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
     );
   }
 

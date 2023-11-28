@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/pages/home_page.dart';
 import '../components/app_text_form_field.dart';
 import 'resources/vectors.dart';
-import '../utils/extensions.dart';
-import '../values/app_colors.dart';
-import '../values/app_constants.dart';
+//import '../utils/extensions.dart';
+import '../resources/app_colors.dart';
+import '../resources/app_constants.dart';
 import '../utils/user_data.dart';
+import '../utils/secure_storage.dart';
+import '../utils/screen_arguments.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -23,37 +23,55 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isObscure = true;
 
-  void PushError(context) {
-    print("fuck this shit blud");
+  void pushError(String error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error)),
+    );
   }
 
   Future<void> verifyLogin() async {
-    print("bruh moment");
+    if (!_formKey.currentState!.validate()) return;
+
+    var email = emailController.text;
+    var password = passwordController.text;
+
     try {
-      var req =
-          await _authAPI.login(emailController.text, passwordController.text);
+      var req = await _authAPI.login(email, password);
       if (req.statusCode == 200) {
-        print(req.body);
         var user = User.fromReqBody(req.body);
-        print("got user");
-        print(user);
-        BlocProvider.of<UserCubit>(context).login(user);
-        print("made it past blocprovider");
-        Navigator.pushNamed(context, '/home');
-        user.printAttributes();
+        print(user.id);
+        await SecureStorage().write('userId', user.id);
+        if (!context.mounted) {
+          print(context.mounted);
+          return;
+        }
+        print(user.email);
+        print(user.password);
+        //BlocProvider.of<UserCubit>(context).login(user);
+        print(context);
+        print(HomePage.routeName);
+        print(
+          ScreenArguments(user.id).userId,
+        );
+        Navigator.pushNamed(
+          context,
+          HomePage.routeName,
+          arguments: ScreenArguments(user.id),
+        );
+        print("navigated");
       } else {
-        PushError(context);
+        pushError('Login failed');
       }
-    } on Exception catch (e) {
-      print("unexpected exception");
-      print(e.toString());
-      PushError(context);
+    } catch (e) {
+      print(e);
+      pushError('Buttcheeks');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = context.mediaQuerySize;
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Form(
@@ -167,17 +185,13 @@ class _LoginPageState extends State<LoginPage> {
                       height: 15,
                     ),
                     FilledButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          verifyLogin();
-                        }
-                      },
+                      onPressed:
+                          verifyLogin, // Updated to call verifyLogin directly
                       style: const ButtonStyle().copyWith(
                         backgroundColor: MaterialStateProperty.all(
-                          _formKey.currentState?.validate() ?? false
-                              ? null
-                              : Colors.grey.shade300,
-                        ),
+                            _formKey.currentState?.validate() ?? false
+                                ? null
+                                : Colors.grey.shade300),
                       ),
                       child: const Text('Login'),
                     ),

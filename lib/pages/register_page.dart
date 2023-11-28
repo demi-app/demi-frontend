@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/pages/goal_selection_page.dart';
+import 'package:frontend/utils/screen_arguments.dart';
+import 'package:frontend/utils/secure_storage.dart';
 
 import '../components/app_text_form_field.dart';
 import '../utils/extensions.dart';
-import '../values/app_colors.dart';
-import '../values/app_constants.dart';
+import '../resources/app_colors.dart';
+import '../resources/app_constants.dart';
 import '../utils/user_data.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -16,6 +20,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   AuthAPI _authAPI = AuthAPI();
+  final storage = FlutterSecureStorage();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -43,25 +48,48 @@ class _RegisterPageState extends State<RegisterPage> {
         emailController.text,
         passwordController.text,
       );
-      if (req.statusCode == 200) {
+      print(req.statusCode);
+      if (req.statusCode == 200 || req.statusCode == 405) {
+        if (!context.mounted) {
+          print('wtf');
+          return;
+        }
+        //delete 405 error after testing
         print(req.body);
-        var user = User.fromReqBody(req.body);
-        BlocProvider.of<UserCubit>(context).login(user);
-        user.printAttributes();
-        Navigator.pushNamed(context, '/goal_selection');
+        print('dis');
+        //var user = User.fromReqBody(req.body);
+        //await SecureStorage().write('userId', user.id);
+        if (!context.mounted) {
+          print("nocontext");
+          return;
+        }
+        print('here');
+        //BlocProvider.of<UserCubit>(context).login(user);
+        Navigator.pushNamed(
+          context,
+          GoalSelection.routeName,
+          arguments: ScreenArguments('1'), //(user.id),
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Registration Complete!'),
           ),
         );
+      }
+    } else {
+      if (!context.mounted) {
+        print("nocontext");
+        return;
       } else {
-        // If email is not available, show an appropriate message
+        Navigator.pushNamed(
+          context,
+          GoalSelection.routeName,
+          arguments: ScreenArguments('1'),
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Email is already registered.')),
         );
       }
-    } else {
-      // Form is not valid, handle accordingly
     }
   }
 
@@ -131,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   AppTextFormField(
-                    labelText: 'Name',
+                    labelText: 'First Name',
                     autofocus: true,
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,

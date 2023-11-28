@@ -8,10 +8,10 @@ class AuthAPI extends BaseAPI {
       String firstName, String lastName, String email, String password) async {
     var body = jsonEncode({
       'user': {
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'password': password,
+        'FirstName': firstName,
+        'LastName': lastName,
+        'Email': email,
+        'Password': password,
       }
     });
 
@@ -21,10 +21,25 @@ class AuthAPI extends BaseAPI {
   }
 
   Future<http.Response> login(String email, String password) async {
-    var body = jsonEncode({'email': email, 'password': password});
+    var body = jsonEncode({'Email': email, 'Password': password});
 
     http.Response response =
         await http.post(super.loginPath, headers: super.headers, body: body);
+
+    return response;
+  }
+
+  Future<http.Response> register(
+      String firstName, String lastName, String email, String password) async {
+    var body = jsonEncode({
+      'Email': email,
+      'Password': password,
+      'firstName': firstName,
+      'lastName': lastName
+    });
+
+    http.Response response =
+        await http.post(super.registerPath, headers: super.headers, body: body);
 
     return response;
   }
@@ -53,37 +68,39 @@ class User {
   String email;
   String firstName;
   String lastName;
+  String password;
 
-  User({
-    required this.id,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-  });
+  User(
+      {required this.id,
+      required this.email,
+      required this.firstName,
+      required this.lastName,
+      required this.password});
 
   // Default constructor
   User.defaultUser()
       : id = 'default_id',
         email = 'default@example.com',
         firstName = 'Default',
-        lastName = 'User';
+        lastName = 'User',
+        password = 'Password1234!';
 
   factory User.fromReqBody(String body) {
     Map<String, dynamic> json = jsonDecode(body);
-
     return User(
-      id: json['id'],
-      email: json['email'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
+      id: json['ID'],
+      email: json['Email'],
+      firstName: json['FirstName'],
+      lastName: json['LastName'],
+      password: json['Password'],
     );
   }
 
   void printAttributes() {
-    print("id: ${this.id}\n");
-    print("email: ${this.email}\n");
-    print("firstName: ${this.firstName}\n");
-    print("lastName: ${this.lastName}\n");
+    print("id: $id\n");
+    print("email: $email\n");
+    print("firstName: $firstName\n");
+    print("lastName: $lastName\n");
   }
 }
 

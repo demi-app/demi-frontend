@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../values/app_constants.dart';
+import '../resources/app_constants.dart';
 
 extension NavigationThroughString on String {
   Future<dynamic> pushName() async {

@@ -36,8 +36,11 @@ class _LoginPageState extends State<LoginPage> {
     var password = passwordController.text;
 
     try {
+      print("penis");
       var req = await _authAPI.login(email, password);
+      print("wenis");
       if (req.statusCode == 200) {
+        print("print");
         var user = User.fromReqBody(req.body);
         print(user.id);
         await SecureStorage().write('userId', user.id);

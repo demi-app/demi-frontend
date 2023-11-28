@@ -88,11 +88,11 @@ class User {
   factory User.fromReqBody(String body) {
     Map<String, dynamic> json = jsonDecode(body);
     return User(
-      id: json['ID'],
-      email: json['Email'],
-      firstName: json['FirstName'],
-      lastName: json['LastName'],
-      password: json['Password'],
+      id: json['id'],
+      email: json['email'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      password: json['password'],
     );
   }
 

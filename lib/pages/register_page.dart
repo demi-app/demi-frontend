@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+//import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/pages/goal_selection_page.dart';
 import 'package:frontend/utils/screen_arguments.dart';
 import 'package:frontend/utils/secure_storage.dart';
+//import 'package:frontend/utils/secure_storage.dart';
 
 import '../components/app_text_form_field.dart';
 import '../utils/extensions.dart';
@@ -42,56 +44,49 @@ class _RegisterPageState extends State<RegisterPage> {
         const SnackBar(content: Text('Checking email availability...')),
       );
       // Use the text property to get the string value from the controllers
-      var req = await _authAPI.signUp(
+      var req = await _authAPI.signup(
         firstNameController.text,
         lastNameController.text,
         emailController.text,
         passwordController.text,
       );
-      print(req.statusCode);
-      if (req.statusCode == 200 || req.statusCode == 405) {
+      if (req.statusCode == 200) {
         if (!context.mounted) {
-          print('wtf');
           return;
         }
-        //delete 405 error after testing
-        print(req.body);
-        print('dis');
-        //var user = User.fromReqBody(req.body);
-        //await SecureStorage().write('userId', user.id);
+        try {
+      var req = await _authAPI.login(emailController.text, passwordController.text);
+      if (req.statusCode == 200) {
+        var user = User.fromReqBody(req.body);
+        await SecureStorage().write('userId', user.id);
         if (!context.mounted) {
-          print("nocontext");
           return;
         }
-        print('here');
-        //BlocProvider.of<UserCubit>(context).login(user);
+        BlocProvider.of<UserCubit>(context).login(user);
         Navigator.pushNamed(
           context,
           GoalSelection.routeName,
-          arguments: ScreenArguments('1'), //(user.id),
+          arguments: ScreenArguments(user.id),
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registration Complete!'),
-          ),
-        );
+        const SnackBar(content: Text('Email succesfully registered.'));
+      } else {
+        const SnackBar(content: Text('Problem registering.'));
       }
+    } catch (e) {
+      print(e);
+      const SnackBar(content: Text('Problem registering.'));
+    }
     } else {
       if (!context.mounted) {
         print("nocontext");
         return;
       } else {
-        Navigator.pushNamed(
-          context,
-          GoalSelection.routeName,
-          arguments: ScreenArguments('1'),
-        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Email is already registered.')),
         );
       }
     }
-  }
+  }}
 
   @override
   Widget build(BuildContext context) {

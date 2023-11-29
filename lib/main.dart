@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/pages/goal_selection_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
@@ -9,12 +10,21 @@ import 'package:frontend/pages/missions_page.dart';
 //import 'utils/secure_storage.dart';
 //import 'pages/register_page.dart';
 import 'utils/screen_arguments.dart';
+import 'utils/user_data.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    BlocProvider<UserCubit>(
+      create: (context) => UserCubit(User.defaultUser()),
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //UserCubit userCubit = BlocProvider.of<UserCubit>(context);
     return MaterialApp(
       routes: {
         '/': (context) => LoginPage(),

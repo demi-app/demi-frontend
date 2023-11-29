@@ -4,7 +4,7 @@ class BaseAPI {
   Uri loginPath = Uri.parse('$api/login');
   Uri authPath = Uri.parse("$api/auth");
   Uri logoutPath = Uri.parse("$api/logout");
-  Uri registerPath = Uri.parse("$api/register");
+  Uri signupPath = Uri.parse("$api/signup");
   // more routes
   Map<String, String> headers = {
     "Content-Type": "application/json; charset=UTF-8"

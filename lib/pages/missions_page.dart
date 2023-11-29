@@ -24,37 +24,13 @@ class _MissionsPageState extends State<MissionsPage> {
   @override
   void initState() {
     super.initState();
-    _loadSampleMissions(); //_fetchMissions();
-  }
-
-  void _loadSampleMissions() {
-    setState(() {
-      _missions = [
-        Mission(
-            id: '1',
-            description:
-                'watch scott pillie', // Adjust as per your requirements
-            xpValue: 10,
-            time: Duration(hours: 2),
-            inspiration: 'h.com/watch?v=ZXsQAXx_ao0',
-            howTo: ''),
-        Mission(
-            id: '2',
-            description: 'bug out', // Adjust as per your requirements
-            xpValue: 20,
-            time: Duration(hours: 1),
-            inspiration: 'https://www.youtube.com/watch?v=ZXsQAXx_ao0',
-            howTo: ''),
-        // Add more sample missions as needed
-      ];
-      _isLoading = false;
-    });
+    _fetchMissions();
   }
 
   Future<void> _fetchMissions() async {
     try {
       final response = await http.get(
-          Uri.parse('http://localhost:8080/missions/accepted'),
+          Uri.parse('http://localhost:8080/missions/all'),
           headers: {'userID': widget.userId});
 
       if (response.statusCode == 200) {
@@ -76,9 +52,11 @@ class _MissionsPageState extends State<MissionsPage> {
     }
   }
 
+/*
   Future<void> getPreferredTime(missionId) async {
     final response = await http.get(Uri.parse(
-        'http://localhost:8080/missions/${widget.userId}/${missionId}'));
+        'http://localhost:8080/missions/${widget.userId}/${missionId}'),
+        headers: {'userId': widget.userId});
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _preferredTime = data['preferredTime'];
@@ -86,12 +64,12 @@ class _MissionsPageState extends State<MissionsPage> {
       // Handle error or set state to show an error message
     }
   }
+  */
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Overview'),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -121,7 +99,8 @@ class _MissionsPageState extends State<MissionsPage> {
                       // Handle reschedule action
                     },
                     preferredTime:
-                        _preferredTime, // Use your preferred time format here
+                        _preferredTime, 
+                    type: 'Choose',
                   ))
               .toList(),
         ],
@@ -132,7 +111,7 @@ class _MissionsPageState extends State<MissionsPage> {
   Future<void> _selectMission(String missionId) async {
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:8080/mission/selected'),
+        Uri.parse('http://localhost:8080/mission/status'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'userID': widget.userId
@@ -140,7 +119,7 @@ class _MissionsPageState extends State<MissionsPage> {
         body: jsonEncode({
           "missionID": missionId,
           "userID": widget.userId,
-          "isSelected": "y"
+          "status": "accepted"
         }),
       );
       if (response.statusCode == 200) {

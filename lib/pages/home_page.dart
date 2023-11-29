@@ -30,11 +30,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadSampleGoals(); //_fetchGoals();
-    _loadSampleMissions(); //_fetchMissions();
-    _loadSampleMilestones(); //_fetchMilestones();
+    _fetchGoals();
+    _fetchMissions();
+    //_fetchMilestones();
   }
-
+/*
   void _loadSampleMissions() {
     setState(() {
       _selectedMissions = [
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
       _isLoading = false;
     });
   }
-
+*/
   Future<void> _fetchGoals() async {
     try {
       final response = await http.get(Uri.parse('http://localhost:8080/goals'),
@@ -108,6 +108,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
       print(e);
+      print("bruh");
     }
   }
 
@@ -126,16 +127,19 @@ class _HomePageState extends State<HomePage> {
         });
       } else {
         print(response.body);
+        print("other stuff");
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
       print(e);
+      print("gotcha");
     }
   }
 
   Future<void> _fetchMissions() async {
+    print(widget.userId);
     try {
       final response = await http.get(
           Uri.parse('http://localhost:8080/missions/accepted'),
@@ -151,18 +155,23 @@ class _HomePageState extends State<HomePage> {
         });
       } else {
         print(response.body);
+        print(response.statusCode);
+        print("tiring");
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
       print(e);
+      print("bruhBruh");
     }
   }
-
+/*
   Future<void> getPreferredTime(missionId) async {
     final response = await http.get(Uri.parse(
-        'http://localhost:8080/missions/${widget.userId}/${missionId}'));
+        'http://localhost:8080/missions/${missionId}'),
+        headers: {'userID': widget.userId});
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _preferredTime = data['preferredTime'];
@@ -170,6 +179,7 @@ class _HomePageState extends State<HomePage> {
       // Handle error or set state to show an error message
     }
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -194,11 +204,11 @@ class _HomePageState extends State<HomePage> {
                   goal: goal, onSelect: () {}, showSelectButton: false))
               .toList(),
           SizedBox(height: 20),
-          Text('Selected Missions',
+          /*Text('Selected Missions',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ..._milestones
               .map((milestone) => MilestoneCard(milestone: milestone))
-              .toList(),
+              .toList(),*/
           SizedBox(height: 20),
           Text('Selected Missions',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -218,7 +228,8 @@ class _HomePageState extends State<HomePage> {
                       // Handle reschedule action
                     },
                     preferredTime:
-                        _preferredTime, // Use your preferred time format here
+                        _preferredTime,
+                        type: 'Mark as Completed'
                   ))
               .toList(),
           SizedBox(height: 20), // Space before the button
@@ -240,6 +251,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  
   Future<void> _updateMissionStatus(String missionId) async {
     try {
       final response = await http.put(
@@ -255,7 +267,7 @@ class _HomePageState extends State<HomePage> {
         }),
       );
       if (response.statusCode == 200) {
-        // Handle successful completion
+        // Handle successful selection
         setState(() {
           _selectedMissions.removeWhere((mission) => mission.id == missionId);
         });
@@ -271,6 +283,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
       print(e);
+      print("buhhhi");
     }
   }
 }

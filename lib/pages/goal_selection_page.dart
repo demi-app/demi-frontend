@@ -25,7 +25,7 @@ class _GoalSelectionState extends State<GoalSelection> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      _loadSampleGoals(); //_fetchGoals();
+     _fetchGoals();
     });
   }
 
@@ -52,20 +52,6 @@ class _GoalSelectionState extends State<GoalSelection> {
     }
   }
 
-  void _loadSampleGoals() {
-    setState(() {
-      _goals = [
-        Goal(id: '1', description: 'blud'),
-        Goal(
-          id: '2',
-          description: 'big dawg',
-        ),
-        // Add more sample missions as needed
-      ];
-      _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,31 +71,36 @@ class _GoalSelectionState extends State<GoalSelection> {
                         goal: g,
                         onSelect: () async {
                           try {
-                            final response = await http.put(
-                              Uri.parse('http://localhost:8080/goal/status'),
+                            final response = await http.post(
+                              Uri.parse('http://localhost:8080/goal'),
                               headers: {
                                 'Content-Type':
                                     'application/json; charset=UTF-8',
+                                    'userID': widget.userId,
                               },
                               body: jsonEncode(
-                                  {"goalID": g.id, "status": "selected"}),
+                                  {"ID": g.id}),
                             );
+                            print(g.id);
+                            print(widget.userId);
                             print("back from response");
-
+                            print(response.statusCode);
                             if (response.statusCode == 200) {
-                              print("goal was selected");
+                              print('big success');
                             } else {
                               // Handle the case where the server returns a non-200 status code
                               print("error");
                               print(response.statusCode);
-                              print(response.body);
+                              print('bruh');
                             }
                           } catch (e) {
                             // Handle any errors here
                             setState(() {
                               _isLoading = false;
+                            print('bruhbruh');
                             });
                             print(e);
+                            print('bruh');
                           }
                         }))
                     .toList(),

@@ -40,6 +40,7 @@ class MissionCard extends StatelessWidget {
   final VoidCallback onHowTo;
   final VoidCallback onReschedule;
   final DateTime preferredTime;
+  final String type;
 
   const MissionCard({
     Key? key,
@@ -49,6 +50,7 @@ class MissionCard extends StatelessWidget {
     required this.onHowTo,
     required this.onReschedule,
     required this.preferredTime,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -64,7 +66,7 @@ class MissionCard extends StatelessWidget {
             ),
             trailing: ElevatedButton(
               onPressed: onSelect,
-              child: Text('Select'),
+              child: Text(type),
             ),
           ),
           ButtonBar(

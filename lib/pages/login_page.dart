@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/pages/home_page.dart';
 import '../components/app_text_form_field.dart';
@@ -39,26 +40,16 @@ class _LoginPageState extends State<LoginPage> {
       var req = await _authAPI.login(email, password);
       if (req.statusCode == 200) {
         var user = User.fromReqBody(req.body);
-        print(user.id);
         await SecureStorage().write('userId', user.id);
         if (!context.mounted) {
-          print(context.mounted);
           return;
         }
-        print(user.email);
-        print(user.password);
-        //BlocProvider.of<UserCubit>(context).login(user);
-        print(context);
-        print(HomePage.routeName);
-        print(
-          ScreenArguments(user.id).userId,
-        );
+        BlocProvider.of<UserCubit>(context).login(user);
         Navigator.pushNamed(
           context,
           HomePage.routeName,
           arguments: ScreenArguments(user.id),
         );
-        print("navigated");
       } else {
         pushError('Login failed');
       }

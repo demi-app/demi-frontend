@@ -4,19 +4,17 @@ import 'BaseAPI.dart';
 import 'package:http/http.dart' as http;
 
 class AuthAPI extends BaseAPI {
-  Future<http.Response> signUp(
+  Future<http.Response> signup(
       String firstName, String lastName, String email, String password) async {
     var body = jsonEncode({
-      'user': {
-        'FirstName': firstName,
-        'LastName': lastName,
-        'Email': email,
-        'Password': password,
-      }
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        //'phone': phone,
+        'password': password,
     });
-
     http.Response response =
-        await http.post(super.usersPath, headers: super.headers, body: body);
+        await http.post(super.signupPath, headers: super.headers, body: body);
     return response;
   }
 
@@ -25,21 +23,6 @@ class AuthAPI extends BaseAPI {
 
     http.Response response =
         await http.post(super.loginPath, headers: super.headers, body: body);
-
-    return response;
-  }
-
-  Future<http.Response> register(
-      String firstName, String lastName, String email, String password) async {
-    var body = jsonEncode({
-      'Email': email,
-      'Password': password,
-      'firstName': firstName,
-      'lastName': lastName
-    });
-
-    http.Response response =
-        await http.post(super.registerPath, headers: super.headers, body: body);
 
     return response;
   }
@@ -88,11 +71,11 @@ class User {
   factory User.fromReqBody(String body) {
     Map<String, dynamic> json = jsonDecode(body);
     return User(
-      id: json['ID'],
-      email: json['Email'],
-      firstName: json['FirstName'],
-      lastName: json['LastName'],
-      password: json['Password'],
+      id: json['id'],
+      email: json['email'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      password: json['password'],
     );
   }
 

@@ -5,12 +5,12 @@ import 'package:http/http.dart' as http;
 
 class AuthAPI extends BaseAPI {
   Future<http.Response> signup(
-      String firstName, String lastName, String email, String password) async {
+      String firstName, String lastName, String email,  String phone, String password,) async {
     var body = jsonEncode({
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
-        //'phone': phone,
+        'phone': phone,
         'password': password,
     });
     http.Response response =
@@ -19,7 +19,7 @@ class AuthAPI extends BaseAPI {
   }
 
   Future<http.Response> login(String email, String password) async {
-    var body = jsonEncode({'Email': email, 'Password': password});
+    var body = jsonEncode({'email': email, 'password': password});
 
     http.Response response =
         await http.post(super.loginPath, headers: super.headers, body: body);
@@ -49,6 +49,7 @@ class AuthAPI extends BaseAPI {
 class User {
   String id;
   String email;
+  String phone;
   String firstName;
   String lastName;
   String password;
@@ -56,6 +57,7 @@ class User {
   User(
       {required this.id,
       required this.email,
+      required this.phone,
       required this.firstName,
       required this.lastName,
       required this.password});
@@ -64,6 +66,7 @@ class User {
   User.defaultUser()
       : id = 'default_id',
         email = 'default@example.com',
+        phone = '3051231234',
         firstName = 'Default',
         lastName = 'User',
         password = 'Password1234!';
@@ -73,6 +76,7 @@ class User {
     return User(
       id: json['id'],
       email: json['email'],
+      phone: json ['phone'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       password: json['password'],
@@ -82,6 +86,7 @@ class User {
   void printAttributes() {
     print("id: $id\n");
     print("email: $email\n");
+    print("phone: $phone\n");
     print("firstName: $firstName\n");
     print("lastName: $lastName\n");
   }

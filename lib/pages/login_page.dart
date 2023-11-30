@@ -12,6 +12,7 @@ import '../utils/secure_storage.dart';
 import '../utils/screen_arguments.dart';
 
 class LoginPage extends StatefulWidget {
+  static const routeName = '/login';
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -40,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       print("penis");
       var req = await _authAPI.login(email, password);
       print("wenis");
+      print(req.statusCode);
       if (req.statusCode == 200) {
         print("print");
         var user = User.fromReqBody(req.body);
@@ -54,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           arguments: ScreenArguments(user.id),
         );
       } else {
+        print(req.body);
         pushError('Login failed');
       }
     } catch (e) {
@@ -130,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'Password',
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.done,
-                      onChanged: (value) {
+                      /*onChanged: (value) {
                         _formKey.currentState?.validate();
                       },
                       validator: (value) {
@@ -139,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                             : AppConstants.passwordRegex.hasMatch(value)
                                 ? null
                                 : 'Invalid Password';
-                      },
+                      },*/
                       controller: passwordController,
                       obscureText: isObscure,
                       suffixIcon: Padding(

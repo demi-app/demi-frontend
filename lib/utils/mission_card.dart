@@ -5,19 +5,20 @@ class Mission {
   final String id;
   final String description;
   final int xpValue;
+  /*final DateTime createdAt;
   final Duration time;
   final String inspiration;
   final String howTo;
-  bool isSelected;
+  bool isSelected;*/
 
   Mission({
     required this.id,
     required this.description,
     required this.xpValue,
-    required this.time,
+    /*required this.time,
     required this.inspiration,
     required this.howTo,
-    this.isSelected = false, // default value
+    this.isSelected = false, // default value*/
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) {
@@ -26,9 +27,10 @@ class Mission {
       id: json['id'],
       description: json['description'],
       xpValue: json['xpValue'],
+      /*createdAt: json['createdAt'],
       time: json['time'],
       inspiration: json['inspiration'],
-      howTo: json['howTo'],
+      howTo: json['howTo'],*/
     );
   }
 }
@@ -61,9 +63,9 @@ class MissionCard extends StatelessWidget {
         children: [
           ListTile(
             title: Text(mission.description),
-            subtitle: Text(
-              "${DateFormat.jm().format(preferredTime)} - ${DateFormat.jm().format(preferredTime.add(mission.time))}",
-            ),
+            //subtitle: Text(
+            //  "${DateFormat.jm().format(preferredTime)} - ${DateFormat.jm().format(preferredTime.add(mission.time))}",
+            //),
             trailing: ElevatedButton(
               onPressed: onSelect,
               child: Text(type),

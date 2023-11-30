@@ -29,6 +29,8 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+
 
   // FocusNode confirmFocusNode = FocusNode();
 
@@ -44,22 +46,28 @@ class _RegisterPageState extends State<RegisterPage> {
         const SnackBar(content: Text('Checking email availability...')),
       );
       // Use the text property to get the string value from the controllers
+      print("signing up");
       var req = await _authAPI.signup(
         firstNameController.text,
         lastNameController.text,
         emailController.text,
+        phoneController.text,
         passwordController.text,
       );
-      if (req.statusCode == 200) {
+      print(req.statusCode);
+      if (req.statusCode == 200){// || req.statusCode == 409) {
         if (!context.mounted) {
+          print("context not mounted");
           return;
         }
         try {
       var req = await _authAPI.login(emailController.text, passwordController.text);
+      print(req.statusCode);
       if (req.statusCode == 200) {
         var user = User.fromReqBody(req.body);
         await SecureStorage().write('userId', user.id);
         if (!context.mounted) {
+          print('prob again');
           return;
         }
         BlocProvider.of<UserCubit>(context).login(user);
@@ -196,6 +204,20 @@ class _RegisterPageState extends State<RegisterPage> {
                               : 'Invalid Email Address';
                     },
                     controller: emailController,
+                  ),
+                  AppTextFormField(
+                    labelText: 'Phone as (xxx) xxx-xxxx',
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (_) => _formKey.currentState?.validate(),
+                    validator: (value) {
+                      return value!.isEmpty
+                          ? 'Please, Enter Phone Number'
+                          : AppConstants.phoneRegex.hasMatch(value)
+                              ? null
+                              : 'Invalid Phone Number';
+                    },
+                    controller: phoneController,
                   ),
                   AppTextFormField(
                     labelText: 'Password',

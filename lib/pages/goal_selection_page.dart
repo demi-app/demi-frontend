@@ -32,7 +32,6 @@ class _GoalSelectionState extends State<GoalSelection> {
   Future<void> _fetchGoals() async {
     try {
       final response = await http.get(Uri.parse('http://localhost:8080/goals'));
-
       if (response.statusCode == 200) {
         List<dynamic> goalsJson = json.decode(response.body);
         setState(() {
@@ -52,6 +51,44 @@ class _GoalSelectionState extends State<GoalSelection> {
     }
   }
 
+  Future<void> _addGoal(selectedGoal) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8080/goal'),
+        headers: {
+          'Content-Type':
+              'application/json; charset=UTF-8',
+              'userID': widget.userId,
+        },
+        body: jsonEncode(
+            {"ID": selectedGoal.id}),
+      );
+      print(selectedGoal.id);
+      print(widget.userId);
+      print("back from response");
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('big success');
+        setState(() {
+          _goals.removeWhere((goal) => goal.id == selectedGoal.id);
+        });
+      } else {
+        // Handle the case where the server returns a non-200 status code
+        print("error");
+        print(response.statusCode);
+        print('bruh');
+      }
+    } catch (e) {
+      // Handle any errors here
+      setState(() {
+        _isLoading = false;
+      print('bruhbruh');
+      });
+      print(e);
+      print('bruh');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,42 +104,11 @@ class _GoalSelectionState extends State<GoalSelection> {
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ..._goals
-                    .map((g) => GoalCard(
-                        goal: g,
-                        onSelect: () async {
-                          try {
-                            final response = await http.post(
-                              Uri.parse('http://localhost:8080/goal'),
-                              headers: {
-                                'Content-Type':
-                                    'application/json; charset=UTF-8',
-                                    'userID': widget.userId,
-                              },
-                              body: jsonEncode(
-                                  {"ID": g.id}),
-                            );
-                            print(g.id);
-                            print(widget.userId);
-                            print("back from response");
-                            print(response.statusCode);
-                            if (response.statusCode == 200) {
-                              print('big success');
-                            } else {
-                              // Handle the case where the server returns a non-200 status code
-                              print("error");
-                              print(response.statusCode);
-                              print('bruh');
-                            }
-                          } catch (e) {
-                            // Handle any errors here
-                            setState(() {
-                              _isLoading = false;
-                            print('bruhbruh');
-                            });
-                            print(e);
-                            print('bruh');
-                          }
-                        }))
+                    .map((goal) => GoalCard(
+                        goal: goal,
+                        onSelect: () {
+                          _addGoal(goal);
+                          }))
                     .toList(),
                 ElevatedButton(
                   onPressed: () => navigateToHomePage(),

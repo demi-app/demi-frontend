@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/missions_page.dart';
-import 'package:frontend/utils/milestone_card.dart';
+import 'package:frontend/utils/secure_storage.dart';
+//import 'package:frontend/utils/milestone_card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/mission_card.dart';
 import '../utils/goal_card.dart';
 import '../utils/screen_arguments.dart';
+import '../utils/user_data.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';
@@ -21,9 +24,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  AuthAPI _authAPI = AuthAPI();
+  Future<void> _logout(BuildContext context) async {
+    var req = await _authAPI.logout(widget.userId);
+    print("maybe here?");
+    if (req.statusCode == 200 || req.statusCode == 404){
+      print('no here');
+      await SecureStorage().delete('userId');
+      print("stuck here");
+      if (!context.mounted) {
+          print("minor bruh moment");
+          return;
+        }
+      Navigator.pushNamed(
+          context,
+          LoginPage.routeName,
+        );
+    }else {
+    print(req.statusCode);
+  }
+  }
+
   List<Goal> _goals = [];
   List<Mission> _selectedMissions = [];
-  List<Milestone> _milestones = [];
+  //List<Milestone> _milestones = [];
   DateTime _preferredTime = DateTime.now();
   bool _isLoading = true;
 
@@ -111,7 +135,7 @@ class _HomePageState extends State<HomePage> {
       print("bruh");
     }
   }
-
+/*
   Future<void> _fetchMilestones() async {
     try {
       final response = await http.get(
@@ -137,7 +161,7 @@ class _HomePageState extends State<HomePage> {
       print("gotcha");
     }
   }
-
+*/
   Future<void> _fetchMissions() async {
     print(widget.userId);
     try {
@@ -232,11 +256,14 @@ class _HomePageState extends State<HomePage> {
                         type: 'Mark as Completed'
                   ))
               .toList(),
-          SizedBox(height: 20), // Space before the button
+          SizedBox(height: 20),
           ElevatedButton(
             onPressed: () => navigateToMissionsPage(),
             child: Text('Go to Missions Page'),
-          )
+          ),
+          ElevatedButton(
+              onPressed: () => _logout(context),
+              child: Text("Logout"),),
         ],
       ),
     );

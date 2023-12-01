@@ -93,7 +93,8 @@ class _GoalSelectionState extends State<GoalSelection> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Overview'),
+        automaticallyImplyLeading: false,
+        title: Text('Goal Selection Page'),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

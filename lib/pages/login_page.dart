@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../components/app_text_form_field.dart';
 import 'resources/vectors.dart';
 //import '../utils/extensions.dart';
@@ -46,10 +47,15 @@ class _LoginPageState extends State<LoginPage> {
         print("print");
         var user = User.fromReqBody(req.body);
         await SecureStorage().write('userId', user.id);
-        if (!context.mounted) {
+                if (!context.mounted) {
           return;
         }
         BlocProvider.of<UserCubit>(context).login(user);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs?.setBool("isLoggedIn", true);
+        if (!context.mounted) {
+          return;
+        }
         Navigator.pushNamed(
           context,
           HomePage.routeName,

@@ -24,14 +24,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Navigation with Arguments',
       home: FutureBuilder<String?>(
-        future: _getUserID(),
+        future: _getUserID(context),
         builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Loading indicator
+            // If the Future is still running, show a loading indicator
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            // If we ran into an error, show an error message
+            return Scaffold(
+              body: Center(child: Text('Error: ${snapshot.error}')),
+            );
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return HomePage(userId: snapshot.data!); // Pass userId to HomePage
+            // If we have data, go to the HomePage
+            return HomePage(userId: snapshot.data!); 
           } else {
-            return LoginPage(); // User is not logged in, show LoginPage
+            // If the userId is null or empty, go to the LoginPage
+            return LoginPage();
           }
         },
       ),
@@ -74,10 +84,12 @@ class MyApp extends StatelessWidget {
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },   
-    );
-  }
+    );}
 
-  Future<String?> _getUserID() async {
+  Future<String?> _getUserID(context) async {
+    if (!context.mounted) {
+          _getUserID(context);
+        }
     return await SecureStorage().read('userId');
   }
 }

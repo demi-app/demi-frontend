@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/utils/screen_arguments.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/mission_card.dart';
@@ -52,6 +54,14 @@ class _MissionsPageState extends State<MissionsPage> {
     }
   }
 
+  void navigateToHomePage() {
+    // Use Navigator to push MissionsPage
+    Navigator.pushNamed(
+      context,
+      HomePage.routeName,
+      arguments: ScreenArguments(widget.userId),
+    );
+  }
 /*
   Future<void> getPreferredTime(missionId) async {
     final response = await http.get(Uri.parse(
@@ -70,6 +80,7 @@ class _MissionsPageState extends State<MissionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -103,9 +114,13 @@ class _MissionsPageState extends State<MissionsPage> {
                     type: 'Choose',
                   ))
               .toList(),
-        ],
-      ),
-    );
+              ElevatedButton(
+                  onPressed: () => navigateToHomePage(),
+                  child: Text('Go to Home Page'),
+                )
+              ],
+            ),
+      );
   }
 
   Future<void> _selectMission(String missionId) async {

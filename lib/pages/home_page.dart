@@ -209,7 +209,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Overview'),
+        automaticallyImplyLeading: false,
+        title: Text('Demi App'),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

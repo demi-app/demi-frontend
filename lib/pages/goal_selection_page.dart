@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/utils/user_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/goal_card.dart';
@@ -18,6 +19,7 @@ class GoalSelection extends StatefulWidget {
 }
 
 class _GoalSelectionState extends State<GoalSelection> {
+  AuthAPI _authAPI = AuthAPI();
   List<Goal> _goals = [];
   bool _isLoading = true;
 
@@ -25,13 +27,13 @@ class _GoalSelectionState extends State<GoalSelection> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-     _fetchGoals();
+      _fetchGoals();
     });
   }
 
   Future<void> _fetchGoals() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8080/goals'));
+      final response = await http.get(_authAPI.goalPath);
       if (response.statusCode == 200) {
         List<dynamic> goalsJson = json.decode(response.body);
         setState(() {
@@ -54,14 +56,12 @@ class _GoalSelectionState extends State<GoalSelection> {
   Future<void> _addGoal(selectedGoal) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8080/goal'),
+        _authAPI.specificGoalPath,
         headers: {
-          'Content-Type':
-              'application/json; charset=UTF-8',
-              'userID': widget.userId,
+          'Content-Type': 'application/json; charset=UTF-8',
+          'userID': widget.userId,
         },
-        body: jsonEncode(
-            {"ID": selectedGoal.id}),
+        body: jsonEncode({"ID": selectedGoal.id}),
       );
       print(selectedGoal.id);
       print(widget.userId);
@@ -82,7 +82,7 @@ class _GoalSelectionState extends State<GoalSelection> {
       // Handle any errors here
       setState(() {
         _isLoading = false;
-      print('bruhbruh');
+        print('bruhbruh');
       });
       print(e);
       print('bruh');
@@ -109,7 +109,7 @@ class _GoalSelectionState extends State<GoalSelection> {
                         goal: goal,
                         onSelect: () {
                           _addGoal(goal);
-                          }))
+                        }))
                     .toList(),
                 ElevatedButton(
                   onPressed: () => navigateToHomePage(),

@@ -7,7 +7,7 @@ import 'package:frontend/pages/missions_page.dart';
 import 'package:frontend/pages/register_page.dart';
 import 'package:frontend/utils/screen_arguments.dart';
 import 'utils/user_data.dart';
-import '../utils/secure_storage.dart';
+import 'pages/splash_page.dart';
 
 void main() {
   runApp(
@@ -23,28 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Navigation with Arguments',
-      home: FutureBuilder<String?>(
-        future: _getUserID(context),
-        builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // If the Future is still running, show a loading indicator
-            return Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (snapshot.hasError) {
-            // If we ran into an error, show an error message
-            return Scaffold(
-              body: Center(child: Text('Error: ${snapshot.error}')),
-            );
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            // If we have data, go to the HomePage
-            return HomePage(userId: snapshot.data!); 
-          } else {
-            // If the userId is null or empty, go to the LoginPage
-            return LoginPage();
-          }
-        },
-      ),
+      home: SplashPage(),
       routes: {
         '/register': (context) => RegisterPage(),
         '/login': (context) => LoginPage(),
@@ -83,13 +62,7 @@ class MyApp extends StatelessWidget {
         }
         assert(false, 'Need to implement ${settings.name}');
         return null;
-      },   
-    );}
-
-  Future<String?> _getUserID(context) async {
-    if (!context.mounted) {
-          _getUserID(context);
-        }
-    return await SecureStorage().read('userId');
+      },
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:frontend/pages/missions_page.dart';
 import 'package:frontend/utils/secure_storage.dart';
 //import 'package:frontend/utils/milestone_card.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../utils/mission_card.dart';
 import '../utils/goal_card.dart';
@@ -26,23 +27,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   AuthAPI _authAPI = AuthAPI();
   Future<void> _logout(BuildContext context) async {
-    var req = await _authAPI.logout(widget.userId);
-    print("maybe here?");
-    if (req.statusCode == 200 || req.statusCode == 404){
-      print('no here');
-      await SecureStorage().delete('userId');
-      print("stuck here");
-      if (!context.mounted) {
-          print("minor bruh moment");
-          return;
-        }
-      Navigator.pushNamed(
-          context,
-          LoginPage.routeName,
-        );
-    }else {
-    print(req.statusCode);
-  }
+    //var req = await _authAPI.logout(widget.userId);
+    print('no here');
+    await SecureStorage().delete('userId');
+    print("stuck here");
+    if (!context.mounted) {
+      print("minor bruh moment");
+      return;
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("isLoggedIn", false);
+    if (!context.mounted) {
+      return;
+    }
+    Navigator.pushNamed(
+      context,
+      LoginPage.routeName,
+    );
   }
 
   List<Goal> _goals = [];
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     _fetchMissions();
     //_fetchMilestones();
   }
+
 /*
   void _loadSampleMissions() {
     setState(() {
@@ -115,8 +117,8 @@ class _HomePageState extends State<HomePage> {
 */
   Future<void> _fetchGoals() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8080/goals'),
-          headers: {'userID': widget.userId});
+      final response =
+          await http.get(_authAPI.goalPath, headers: {'userID': widget.userId});
 
       if (response.statusCode == 200) {
         List<dynamic> goalsJson = json.decode(response.body);
@@ -135,6 +137,7 @@ class _HomePageState extends State<HomePage> {
       print("bruh");
     }
   }
+
 /*
   Future<void> _fetchMilestones() async {
     try {
@@ -165,9 +168,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchMissions() async {
     print(widget.userId);
     try {
-      final response = await http.get(
-          Uri.parse('http://localhost:8080/missions/accepted'),
-          headers: {'userID': widget.userId});
+      final response = await http
+          .get(_authAPI.missionsAccepted, headers: {'userID': widget.userId});
 
       if (response.statusCode == 200) {
         List<dynamic> selectedMissionsJson = json.decode(response.body);
@@ -176,6 +178,7 @@ class _HomePageState extends State<HomePage> {
               .map((json) => Mission.fromJson(json))
               .toList();
           _isLoading = false;
+          print("found missions");
         });
       } else {
         print(response.body);
@@ -239,23 +242,21 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ..._selectedMissions
               .map((mission) => MissionCard(
-                    mission: mission,
-                    onSelect: () {
-                      _updateMissionStatus(mission.id);
-                    },
-                    onInspiration: () {
-                      // Handle inspiration action
-                    },
-                    onHowTo: () {
-                      // Handle how-to action
-                    },
-                    onReschedule: () {
-                      // Handle reschedule action
-                    },
-                    preferredTime:
-                        _preferredTime,
-                        type: 'Mark as Completed'
-                  ))
+                  mission: mission,
+                  onSelect: () {
+                    _updateMissionStatus(mission.id);
+                  },
+                  onInspiration: () {
+                    // Handle inspiration action
+                  },
+                  onHowTo: () {
+                    // Handle how-to action
+                  },
+                  onReschedule: () {
+                    // Handle reschedule action
+                  },
+                  preferredTime: _preferredTime,
+                  type: 'Mark as Completed'))
               .toList(),
           SizedBox(height: 20),
           ElevatedButton(
@@ -263,8 +264,9 @@ class _HomePageState extends State<HomePage> {
             child: Text('Go to Missions Page'),
           ),
           ElevatedButton(
-              onPressed: () => _logout(context),
-              child: Text("Logout"),),
+            onPressed: () => _logout(context),
+            child: Text("Logout"),
+          ),
         ],
       ),
     );
@@ -279,11 +281,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  
   Future<void> _updateMissionStatus(String missionId) async {
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:8080/mission/status'),
+        _authAPI.missionStatus,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'userID': widget.userId

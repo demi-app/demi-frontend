@@ -7,15 +7,15 @@ import 'package:frontend/utils/secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/pages/home_page.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _SplashScreenState();
+    return _SplashPageState();
   }
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("demi-frontend/assets/images/demi-logo.jpg"),
+              image: AssetImage("../../assets/images/demi-logo.jpg"),
               fit: BoxFit.cover),
         ),
       ),
@@ -41,30 +41,27 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  void navigateUser() async{
+  void navigateUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = prefs.getBool('isLoggedIn') ?? false;
     print(status);
     if (status) {
-      if (!context.mounted){
+      if (!context.mounted) {
         return;
-      };
+      }
+      ;
       String userId = await SecureStorage().read('userId');
-      if (!context.mounted){
+      if (!context.mounted) {
         return;
-      };
-      Navigator.pushNamed(
-          context,
-          HomePage.routeName,
+      }
+      ;
+      Navigator.pushNamed(context, HomePage.routeName,
           arguments: ScreenArguments(userId));
     } else {
-      if (!context.mounted){
+      if (!context.mounted) {
         return;
-      };
-      Navigator.pushNamed(
-          context,
-          LoginPage.routeName,
-          arguments: LoginPage());
+      }
+      Navigator.pushNamed(context, LoginPage.routeName);
     }
   }
 }

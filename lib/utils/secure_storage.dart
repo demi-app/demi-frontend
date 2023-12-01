@@ -10,6 +10,7 @@ class SecureStorage {
   read(String k) async {
     String value = await storage.read(key: k) ?? 'No data found!';
     print(value);
+    print(k);
     return value;
   }
 

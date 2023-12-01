@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/utils/screen_arguments.dart';
+import 'package:frontend/utils/user_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/mission_card.dart';
@@ -19,6 +20,7 @@ class MissionsPage extends StatefulWidget {
 }
 
 class _MissionsPageState extends State<MissionsPage> {
+  AuthAPI _authAPI = AuthAPI();
   List<Mission> _missions = [];
   DateTime _preferredTime = DateTime.now();
   bool _isLoading = true;
@@ -32,7 +34,7 @@ class _MissionsPageState extends State<MissionsPage> {
   Future<void> _fetchMissions() async {
     try {
       final response = await http.get(
-          Uri.parse('http://localhost:8080/missions/all'),
+          _authAPI.missionsAll,
           headers: {'userID': widget.userId});
 
       if (response.statusCode == 200) {
@@ -126,7 +128,7 @@ class _MissionsPageState extends State<MissionsPage> {
   Future<void> _selectMission(String missionId) async {
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:8080/mission/status'),
+        _authAPI.missionStatus,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'userID': widget.userId

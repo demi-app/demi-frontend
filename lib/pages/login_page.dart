@@ -47,12 +47,12 @@ class _LoginPageState extends State<LoginPage> {
         print("print");
         var user = User.fromReqBody(req.body);
         await SecureStorage().write('userId', user.id);
-                if (!context.mounted) {
+        if (!context.mounted) {
           return;
         }
         BlocProvider.of<UserCubit>(context).login(user);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs?.setBool("isLoggedIn", true);
+        prefs.setBool("isLoggedIn", true);
         if (!context.mounted) {
           return;
         }
@@ -230,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(
                       height: 30,
                     ),
-                    Row(
+                    /*Row(
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
@@ -264,7 +264,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ],
-                    ),
+                    ),*/
                   ],
                 ),
               ),

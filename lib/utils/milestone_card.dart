@@ -2,37 +2,44 @@ import 'package:flutter/material.dart';
 
 class Milestone {
   final String id;
-  //final String iconName;
+  final String name;
   final String description;
-  final double progress;
-  final String goalId;
+  final double xpRequired;
+  final String category;
 
   Milestone({
     required this.id,
-    //required this.iconName,
+    required this.name,
     required this.description,
-    required this.progress,
-    required this.goalId,
+    required this.xpRequired,
+    required this.category,
   });
 
   factory Milestone.fromJson(Map<String, dynamic> json) {
     return Milestone(
       id: json['id'],
-      //iconName: json['icon'],
+      name: json['name'],
       description: json['description'],
-      progress: json['progress'],
-      goalId: json['milestone_id'],
+      xpRequired: json['progress'],
+      category: json['milestone_id'],
     );
   }
 }
 
 class MilestoneCard extends StatelessWidget {
   final Milestone milestone;
+  final double progress;
 
   const MilestoneCard({
     Key? key,
     required this.milestone,
+    required this.progress,
   }) : super(key: key);
+
+  double userProgress(numerator, denominator) {
+    double result = numerator / denominator;
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +55,7 @@ class MilestoneCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Goal title",
+                  milestone.name,
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -61,7 +68,7 @@ class MilestoneCard extends StatelessWidget {
                 ),
                 SizedBox(height: 16.0),
                 LinearProgressIndicator(
-                  value: milestone.progress,
+                  value: userProgress(progress, milestone.xpRequired),
                   backgroundColor: Colors.grey[200],
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),

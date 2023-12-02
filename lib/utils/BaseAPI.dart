@@ -7,9 +7,10 @@ class BaseAPI {
   Uri signupPath = Uri.parse("$api/signup");
   Uri goalPath = Uri.parse('$api/goals');
   Uri specificGoalPath = Uri.parse('$api/goal');
-  Uri missionsAccepted = Uri.parse('$api/missions/accepted');
-  Uri missionsAll = Uri.parse('$api/missions/all');
-  Uri missionStatus = Uri.parse('$api/mission/status');
+  Uri missionsAcceptedPath = Uri.parse('$api/missions/accepted');
+  Uri missionsAllPath = Uri.parse('$api/missions/all');
+  Uri missionStatusPath = Uri.parse('$api/mission/status');
+  Uri milestonesPath = Uri.parse('$api/milestones');
   // more routes
   Map<String, String> headers = {
     "Content-Type": "application/json; charset=UTF-8"

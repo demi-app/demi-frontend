@@ -5,20 +5,19 @@ class Mission {
   final String id;
   final String description;
   final int xpValue;
-  /*final DateTime createdAt;
-  final Duration time;
+  final DateTime createdAt;
   final String inspiration;
   final String howTo;
-  bool isSelected;*/
+  final String category;
 
   Mission({
     required this.id,
     required this.description,
     required this.xpValue,
-    /*required this.time,
+    required this.createdAt,
     required this.inspiration,
     required this.howTo,
-    this.isSelected = false, // default value*/
+    required this.category,
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) {
@@ -27,10 +26,10 @@ class Mission {
       id: json['id'],
       description: json['description'],
       xpValue: json['xpValue'],
-      /*createdAt: json['createdAt'],
-      time: json['time'],
+      createdAt: json['createdAt'],
       inspiration: json['inspiration'],
-      howTo: json['howTo'],*/
+      howTo: json['howTo'],
+      category: json['category'],
     );
   }
 }
@@ -41,18 +40,20 @@ class MissionCard extends StatelessWidget {
   final VoidCallback onInspiration;
   final VoidCallback onHowTo;
   final VoidCallback onReschedule;
-  final DateTime preferredTime;
-  final String type;
+  final DateTime startTime;
+  final DateTime endTime;
+  final String selectionReason;
 
   const MissionCard({
     Key? key,
     required this.mission,
     required this.onSelect,
+    required this.startTime,
+    required this.endTime,
+    required this.selectionReason,
     required this.onInspiration,
     required this.onHowTo,
     required this.onReschedule,
-    required this.preferredTime,
-    required this.type,
   }) : super(key: key);
 
   @override
@@ -68,7 +69,7 @@ class MissionCard extends StatelessWidget {
             //),
             trailing: ElevatedButton(
               onPressed: onSelect,
-              child: Text(type),
+              child: Text(selectionReason),
             ),
           ),
           ButtonBar(
